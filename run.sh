@@ -28,13 +28,14 @@ do
     -s \
     --compressed | jq '.providers | .[] | select(.alias == "transferwise") | .quotes | map(.rate | tostring) | join(",")' -r)
 
-  echo "Conversion rate is: ${output}"
+  echo "[ $(date +"%Y-%m-%d %T") ] => ${output}"
 
   if ! [[ $output =~ $re ]] ; then
     echo "error: Not a number"
-    spd-say "Error: Not a number"
+
   elif (( $(echo "$output >= $threshold" | bc -l) )) ; then
     spd-say "${output}"
+    xdg-open "https://transferwise.com/transferFlow#/enterpayment"
   fi
   sleep ${every}
 done
